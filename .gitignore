@@ -1,0 +1,56 @@
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime data and local models
+backend/storage/
+backend/logs/
+backend/models/
+models/
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.safetensors
+*.bin
+*.onnx
+*.pt
+*.pth
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+~$*
+
