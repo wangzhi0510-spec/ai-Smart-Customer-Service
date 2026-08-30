@@ -20,7 +20,7 @@ htmlcov/
 backend/storage/
 backend/logs/
 backend/models/
-models/
+/models/
 logs/
 *.log
 *.db

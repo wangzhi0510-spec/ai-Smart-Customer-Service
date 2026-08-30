@@ -81,3 +81,6 @@ def test_public_environment_template_has_safe_required_settings() -> None:
 
 def test_public_environment_template_is_not_ignored() -> None:
     assert ".env.example" not in git_check_ignore(".env.example")
+
+def test_backend_model_source_code_is_not_ignored() -> None:
+    assert "backend/app/models/user.py" not in git_check_ignore("backend/app/models/user.py")
