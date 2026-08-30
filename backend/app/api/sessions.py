@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
 from backend.app.core.security import get_current_user
@@ -14,8 +14,8 @@ def create_session(payload: SessionCreate, user: User = Depends(get_current_user
     return SessionService(db).create(user.id, payload.title)
 
 @router.get("/sessions", response_model=list[SessionRead])
-def list_sessions(user: User = Depends(get_current_user), db: Session = Depends(get_session)):
-    return SessionService(db).list(user.id)
+def list_sessions(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100), user: User = Depends(get_current_user), db: Session = Depends(get_session)):
+    return SessionService(db).list(user.id, page, page_size)
 
 @router.get("/sessions/{session_id}", response_model=SessionRead)
 def get_session_detail(session_id: str, user: User = Depends(get_current_user), db: Session = Depends(get_session)):

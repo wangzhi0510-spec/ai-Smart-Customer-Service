@@ -22,11 +22,13 @@ class SessionService:
         self.db.refresh(item)
         return item
 
-    def list(self, user_id: str) -> list[ChatSession]:
+    def list(self, user_id: str, page: int = 1, page_size: int = 20) -> list[ChatSession]:
         query = (
             select(ChatSession)
             .where(ChatSession.user_id == user_id, ChatSession.is_deleted.is_(False))
             .order_by(ChatSession.updated_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
         )
         return list(self.db.scalars(query).all())
 

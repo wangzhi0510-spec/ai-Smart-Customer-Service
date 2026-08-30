@@ -23,6 +23,9 @@ def test_sessions_are_isolated_and_delete_is_idempotent():
     session_id=created.json()["id"]
     assert client.get("/api/v1/sessions",headers=auth(token_a)).json()[0]["id"] == session_id
     assert client.get("/api/v1/sessions",headers=auth(token_b)).json() == []
+    second=client.post("/api/v1/sessions",headers=auth(token_a),json={"title":"第二个"})
+    assert second.status_code == 201
+    assert len(client.get("/api/v1/sessions?page=1&page_size=1",headers=auth(token_a)).json()) == 1
     assert client.get(f"/api/v1/sessions/{session_id}",headers=auth(token_b)).status_code == 404
     assert client.delete(f"/api/v1/sessions/{session_id}",headers=auth(token_a)).status_code == 204
     assert client.delete(f"/api/v1/sessions/{session_id}",headers=auth(token_a)).status_code == 204
