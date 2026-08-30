@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     dashscope_base_url: str = Field("https://dashscope.aliyuncs.com/compatible-mode/v1", validation_alias="DASHSCOPE_BASE_URL")
     llm_model: str = Field("qwen-plus", validation_alias="LLM_MODEL")
     jwt_secret_key: str = Field("", validation_alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field("HS256", validation_alias="JWT_ALGORITHM")
+    jwt_access_token_expire_minutes: int = Field(1440, validation_alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
     embedding_model_path: str = Field("", validation_alias="EMBEDDING_MODEL_PATH")
     reranker_model_path: str = Field("", validation_alias="RERANKER_MODEL_PATH")
     max_upload_size_mb: int = Field(20, validation_alias="MAX_UPLOAD_SIZE_MB")
@@ -35,4 +37,3 @@ class Settings(BaseSettings):
         if not settings.dashscope_api_key:
             logging.getLogger("ai_customer_service.config").warning("DASHSCOPE_API_KEY is not configured")
         return settings
-
