@@ -7,6 +7,7 @@ from backend.app.core.config import Settings
 from backend.app.api.auth import router as auth_router
 from backend.app.api.sessions import router as sessions_router
 from backend.app.api.documents import router as documents_router
+from backend.app.api.query import router as query_router
 from backend.app.db.base import Base
 from backend.app.db.session import get_engine
 import backend.app.db
@@ -17,6 +18,7 @@ def create_app(settings: Settings | None = None)->FastAPI:
     app.include_router(auth_router)
     app.include_router(sessions_router)
     app.include_router(documents_router)
+    app.include_router(query_router)
     app.add_exception_handler(AppError,app_error_handler); app.add_exception_handler(RequestValidationError,validation_error_handler); app.add_exception_handler(404,http_error_handler)
     @app.middleware("http")
     async def request_id_middleware(request:Request,call_next):

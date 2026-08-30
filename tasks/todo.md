@@ -43,7 +43,7 @@
 
 - [x] 任务 11：实现 Dense/Sparse 检索、RRF、父块回收和重排降级。
 - [x] 任务 12：实现证据型 Prompt、长文档策略、DashScope Provider 和 FQA/RAG 编排。
-- [ ] 任务 13：实现非流式问答和真实 POST-SSE `start/delta/source/done/error`。
+- [x] 任务 13：实现非流式问答和真实 POST-SSE `start/delta/source/done/error`。
 
 ### 检查点 D
 
