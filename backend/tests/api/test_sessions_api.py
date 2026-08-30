@@ -49,4 +49,3 @@ def test_history_and_feedback_are_owner_scoped_and_feedback_updates():
     assert second.status_code == 200
     assert second.json()["id"] == feedback_id
     assert second.json()["rating"] == "negative"
-
