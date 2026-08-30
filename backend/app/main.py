@@ -4,9 +4,15 @@ from fastapi.exceptions import RequestValidationError
 from backend.app.api.error_handlers import app_error_handler,http_error_handler,validation_error_handler
 from backend.app.core.errors import AppError
 from backend.app.core.config import Settings
+from backend.app.api.auth import router as auth_router
+from backend.app.db.base import Base
+from backend.app.db.session import get_engine
+import backend.app.db
 def create_app(settings: Settings | None = None)->FastAPI:
     app=FastAPI(title="AI Smart Customer Service",version="0.1.0")
     app.state.settings = settings or Settings.from_env()
+    Base.metadata.create_all(bind=get_engine(app.state.settings))
+    app.include_router(auth_router)
     app.add_exception_handler(AppError,app_error_handler); app.add_exception_handler(RequestValidationError,validation_error_handler); app.add_exception_handler(404,http_error_handler)
     @app.middleware("http")
     async def request_id_middleware(request:Request,call_next):
