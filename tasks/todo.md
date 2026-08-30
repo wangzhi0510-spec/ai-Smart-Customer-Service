@@ -8,7 +8,7 @@
 
 - [x] 任务 1：建立项目规则、`.gitignore`、`.env.example` 和仓库安全测试。
 - [x] 任务 2：创建 Python 虚拟环境、FastAPI/Vue 脚手架和 health 测试。
-- [ ] 任务 3：实现配置层、结构化日志、request ID 和统一错误协议。
+- [x] 任务 3：实现配置层、结构化日志、request ID 和统一错误协议。
 
 ### 检查点 A
 
