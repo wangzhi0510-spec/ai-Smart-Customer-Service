@@ -51,9 +51,23 @@ a { color: #2563eb; }
 .alert button { border: 0; background: transparent; color: inherit; text-decoration: underline; }
 .empty-state { margin: auto; padding: 3rem 1.5rem; text-align: center; color: #64748b; }
 .empty-state h2 { color: #334155; }
+.documents-page { width: min(920px, 100%); margin: 0 auto; padding: 1.5rem; }
+.document-uploader { border: 1px dashed #94a3b8; border-radius: .6rem; background: #fff; padding: 1rem; }
+.document-uploader label { display: block; margin-bottom: .6rem; color: #334155; font-weight: 700; }
+.document-uploader input { display: block; max-width: 100%; }
+.document-uploader .muted { margin-bottom: 0; }
+.document-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.document-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1rem; border: 1px solid #e2e8f0; border-radius: .55rem; background: #fff; padding: .85rem 1rem; margin-bottom: .6rem; }
+.document-main { min-width: 0; }
+.document-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.document-meta { display: block; margin-top: .25rem; color: #64748b; font-size: .8rem; }
+.document-status { color: #475569; font-size: .85rem; white-space: nowrap; }
+.status-ready { color: #047857; }.status-failed { color: #b91c1c; }.status-processing { color: #b45309; }
+.delete-button.light { color: #b91c1c; }
 .auth-shell { display: grid; min-height: 100vh; place-items: center; padding: 1rem; background: #f5f7fa; }
 .auth-card { width: min(420px, 100%); border: 1px solid #e2e8f0; border-radius: .75rem; background: #fff; padding: 2rem; box-shadow: 0 8px 24px rgba(15, 23, 42, .06); }
 .auth-card form { margin: 1.5rem 0 1rem; }
 .auth-card input { margin-bottom: 1rem; }
 .auth-card form button { width: 100%; }
 @media (max-width: 700px) { .app-shell { display: block; } .session-sidebar { padding: .8rem 1rem; } .session-list { display: flex; gap: .4rem; overflow-x: auto; margin: .7rem 0 0; } .session-list li { min-width: 150px; } .delete-button { display: none; } .topbar, .message-list, .composer { padding-left: 1rem; padding-right: 1rem; } .message { max-width: 92%; } }
+@media (max-width: 700px) { .documents-page { padding: 1rem; } .document-row { grid-template-columns: minmax(0, 1fr) auto; } .document-row .delete-button { display: block; grid-column: 2; grid-row: 1; } .document-status { grid-column: 1; } }
