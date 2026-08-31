@@ -71,7 +71,7 @@
 
 ## 阶段八：GitHub 交付
 
-- [ ] 任务 20：密钥扫描、干净 clone smoke、GitHub 工具上传和远程核验。
+- [~] 任务 20：密钥扫描、干净 clone smoke、GitHub 工具上传和远程核验。
 
 ## 最终验收
 
