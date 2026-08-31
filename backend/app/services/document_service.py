@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from backend.app.adapters.document_storage import DocumentStorage, StoredFile
+from backend.app.adapters.milvus_client import MilvusClient
 from backend.app.core.config import Settings
 from backend.app.core.errors import AppError
 from backend.app.models.document import Document
@@ -21,10 +22,15 @@ class DocumentService:
         ".pdf": {"application/pdf"},
     }
 
-    def __init__(self, db: Session, settings: Settings | None = None, storage: DocumentStorage | None = None, enqueue_task: Callable[[str], object] | None = None):
+    def __init__(self, db: Session, settings: Settings | None = None, storage: DocumentStorage | None = None, enqueue_task: Callable[[str], object] | None = None, milvus: MilvusClient | None = None):
         self.db = db
         self.settings = settings or Settings.from_env()
         self.enqueue_task = enqueue_task or self._enqueue_task
+        self.milvus = milvus or MilvusClient(
+            host=self.settings.milvus_host,
+            port=self.settings.milvus_port,
+            collection_name=self.settings.milvus_collection,
+        )
         self.storage = storage or DocumentStorage(
             self.settings.document_storage_path,
             self.settings.max_upload_size_mb * 1024 * 1024,
@@ -109,6 +115,8 @@ class DocumentService:
         item.status = "deleting"
         self.db.commit()
         try:
+            if item.chunk_count > 0 or item.status in {"ready", "processing", "failed"}:
+                self.milvus.delete_by_document(item.id)
             self.storage.delete(item.storage_path)
             item.deleted_at = datetime.now(timezone.utc)
             item.status = "deleted"
