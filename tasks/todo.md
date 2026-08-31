@@ -82,4 +82,4 @@
 ## 阶段九：本地 Docker 运行闭环修复
 
 - [x] 任务 21：修复 Celery 文档任务注册并验证 Worker 消费。
-- [ ] 任务 22：初始化 Milvus Dense/Sparse 索引并验证真实检索。
+- [x] 任务 22：初始化 Milvus Dense/Sparse 索引并验证真实检索。
