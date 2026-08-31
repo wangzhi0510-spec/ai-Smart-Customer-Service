@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -94,5 +94,5 @@ def process_document(document_id: str, db=None, parser=None, chunker=None, index
 
 @celery_app.task(bind=True, name="backend.app.workers.document_tasks.process_document", autoretry_for=(ConnectionError, TimeoutError), retry_backoff=True, max_retries=3)
 def process_document_task(self, document_id: str):
-    return process_document(document_id)
+    return asdict(process_document(document_id))
 
