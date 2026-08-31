@@ -8,12 +8,14 @@ from backend.app.api.auth import router as auth_router
 from backend.app.api.sessions import router as sessions_router
 from backend.app.api.documents import router as documents_router
 from backend.app.api.query import router as query_router
+from backend.app.services.qa_factory import build_qa_service
 from backend.app.db.base import Base
 from backend.app.db.session import get_engine
 import backend.app.db
 def create_app(settings: Settings | None = None)->FastAPI:
     app=FastAPI(title="AI Smart Customer Service",version="0.1.0")
     app.state.settings = settings or Settings.from_env()
+    app.state.qa_service = build_qa_service(app.state.settings)
     Base.metadata.create_all(bind=get_engine(app.state.settings))
     app.include_router(auth_router)
     app.include_router(sessions_router)

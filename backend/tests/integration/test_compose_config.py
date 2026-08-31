@@ -57,6 +57,14 @@ def test_backend_runs_migrations_and_frontend_proxies_api() -> None:
     assert "http://127.0.0.1:8080/" in str(healthcheck)
 
 
+def test_compose_preserves_nested_model_mount_paths() -> None:
+    services = load_compose()["services"]
+    environment = services["backend"].get("environment", {})
+
+    assert environment["EMBEDDING_MODEL_PATH"] == "/models/embedding/bge-m3"
+    assert environment["RERANKER_MODEL_PATH"] == "/models/reranker/bge-reranker-large"
+
+
 def test_backend_image_installs_local_embedding_runtime() -> None:
     requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8").lower()
     backend_dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")

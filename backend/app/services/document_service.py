@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from collections.abc import Callable
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -20,9 +21,10 @@ class DocumentService:
         ".pdf": {"application/pdf"},
     }
 
-    def __init__(self, db: Session, settings: Settings | None = None, storage: DocumentStorage | None = None):
+    def __init__(self, db: Session, settings: Settings | None = None, storage: DocumentStorage | None = None, enqueue_task: Callable[[str], object] | None = None):
         self.db = db
         self.settings = settings or Settings.from_env()
+        self.enqueue_task = enqueue_task or self._enqueue_task
         self.storage = storage or DocumentStorage(
             self.settings.document_storage_path,
             self.settings.max_upload_size_mb * 1024 * 1024,
@@ -59,6 +61,16 @@ class DocumentService:
             self.db.add(item)
             self.db.commit()
             self.db.refresh(item)
+            if self.settings.app_env == "production":
+                try:
+                    self.enqueue_task(item.id)
+                except Exception as exc:
+                    self.db.rollback()
+                    item.status = "failed"
+                    item.error_code = "DOCUMENT_QUEUE_ERROR"
+                    item.error_message = "文档处理任务暂时无法排队"
+                    self.db.commit()
+                    raise AppError("DOCUMENT_QUEUE_ERROR", "文档处理任务暂时无法排队", 503) from exc
             return item
         except AppError:
             self.db.rollback()
@@ -71,6 +83,11 @@ class DocumentService:
                 except Exception:
                     pass
             raise AppError("DOCUMENT_CREATE_ERROR", "文档暂时无法创建", 503) from exc
+
+    @staticmethod
+    def _enqueue_task(document_id: str) -> object:
+        from backend.app.workers.document_tasks import process_document_task
+        return process_document_task.delay(document_id)
 
     def list(self, user_id: str) -> list[Document]:
         return list(self.db.scalars(select(Document).where(
