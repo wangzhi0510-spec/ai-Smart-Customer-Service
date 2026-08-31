@@ -10,3 +10,6 @@ celery_app = Celery(
 )
 celery_app.conf.task_routes = {"backend.app.workers.document_tasks.process_document": {"queue": "documents"}}
 celery_app.conf.task_default_queue = "documents"
+
+# Import task definitions during app initialization so API tests and worker startup share the same registry.
+from backend.app.workers import document_tasks as _document_tasks  # noqa: F401
