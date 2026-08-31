@@ -23,7 +23,10 @@ class DocumentService:
     def __init__(self, db: Session, settings: Settings | None = None, storage: DocumentStorage | None = None):
         self.db = db
         self.settings = settings or Settings.from_env()
-        self.storage = storage or DocumentStorage(Path.cwd() / "storage", self.settings.max_upload_size_mb * 1024 * 1024)
+        self.storage = storage or DocumentStorage(
+            self.settings.document_storage_path,
+            self.settings.max_upload_size_mb * 1024 * 1024,
+        )
 
     @classmethod
     def validate_upload(cls, filename: str | None, content_type: str | None) -> tuple[str, str]:

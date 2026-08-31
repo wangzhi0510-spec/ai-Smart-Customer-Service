@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.app.core.errors import AppError
+from backend.app.core.config import Settings
 from backend.app.db.session import get_engine
 from backend.app.models.document import Document
 from backend.app.rag.chunker import ParentChildChunker
@@ -30,7 +31,17 @@ class DocumentTaskProcessor:
         self.db = db
         self.parser = parser or DocumentParser()
         self.chunker = chunker or ParentChildChunker()
-        self.indexer = indexer or DocumentIndexer(EmbeddingProvider(), MilvusClient())
+        if indexer is None:
+            settings = Settings.from_env()
+            indexer = DocumentIndexer(
+                EmbeddingProvider(model_path=settings.embedding_model_path),
+                MilvusClient(
+                    host=settings.milvus_host,
+                    port=settings.milvus_port,
+                    collection_name=settings.milvus_collection,
+                ),
+            )
+        self.indexer = indexer
 
     def process(self, document_id: str) -> DocumentTaskResult:
         document = self.db.get(Document, document_id)
