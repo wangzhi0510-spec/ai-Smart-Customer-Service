@@ -43,6 +43,13 @@ class SessionService:
             raise AppError("NOT_FOUND", "会话不存在", 404)
         return item
 
+    def update(self, user_id: str, session_id: str, title: str) -> ChatSession:
+        item = self.get(user_id, session_id)
+        item.title = title.strip()
+        self.db.commit()
+        self.db.refresh(item)
+        return item
+
     def delete(self, user_id: str, session_id: str) -> None:
         item = self.db.scalar(
             select(ChatSession).where(ChatSession.id == session_id, ChatSession.user_id == user_id)
