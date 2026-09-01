@@ -1,11 +1,25 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class SessionCreate(BaseModel):
     title: str = Field(default="新会话", min_length=1, max_length=255)
+
+
+class SessionUpdate(BaseModel):
+    title: str = Field(min_length=1, max_length=255)
+
+    @field_validator("title", mode="before")
+    @classmethod
+    def normalize_title(cls, value: str) -> str:
+        if not isinstance(value, str):
+            raise ValueError("标题必须为文本")
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("标题不能为空")
+        return normalized
 
 
 class SessionRead(BaseModel):
