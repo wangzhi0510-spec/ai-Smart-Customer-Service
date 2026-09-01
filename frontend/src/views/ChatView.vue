@@ -24,10 +24,21 @@ const canSubmit = computed(() => Boolean(activeSessionId.value && question.value
 onMounted(async () => {
   try {
     const loaded = await chat.listSessions();
-    if (loaded?.length) sessions.value = loaded;
-    if (!activeSessionId.value && sessions.value.length) activeSessionId.value = sessions.value[0].id;
+    sessions.value = loaded ?? [];
+    if (sessions.value.length === 0) {
+      const created = await chat.createSession("新会话");
+      sessions.value = chat.sessions ?? [created];
+      activeSessionId.value = created.id;
+      messages.value = [];
+      return;
+    }
+    if (!activeSessionId.value || !sessions.value.some((item) => item.id === activeSessionId.value)) {
+      activeSessionId.value = sessions.value[0].id;
+    }
     if (activeSessionId.value) messages.value = (await chat.loadMessages(activeSessionId.value)) as Message[];
-  } catch (error) { errorMessage.value = error instanceof Error ? error.message : "会话加载失败"; }
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : "会话加载失败";
+  }
 });
 
 async function selectSession(id: string) {
@@ -40,6 +51,19 @@ async function createSession() {
   sessions.value = chat.sessions ?? [...sessions.value, created];
   activeSessionId.value = created.id;
   messages.value = [];
+}
+
+async function renameSession(id: string, title: string) {
+  const previous = sessions.value.find((item) => item.id === id)?.title;
+  try {
+    const updated = await chat.updateSession(id, title);
+    const index = sessions.value.findIndex((item) => item.id === id);
+    if (index >= 0) sessions.value[index] = updated;
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : "会话重命名失败";
+    const item = sessions.value.find((entry) => entry.id === id);
+    if (item && previous) item.title = previous;
+  }
 }
 
 async function removeSession(id: string) {
@@ -86,7 +110,7 @@ function logout() { auth.logout(); void router.push("/login"); }
 
 <template>
   <main class="app-shell">
-    <SessionSidebar :sessions="sessions" :active-session-id="activeSessionId" @create="createSession" @select="selectSession" @remove="removeSession" />
+    <SessionSidebar :sessions="sessions" :active-session-id="activeSessionId" @create="createSession" @select="selectSession" @remove="removeSession" @rename="renameSession" />
     <section class="chat-workspace">
       <header class="topbar"><div><p class="eyebrow">AI 智能客服</p><h1>知识库问答工作台</h1></div><nav><router-link to="/documents">知识库</router-link><button type="button" class="link-button" @click="logout">退出</button></nav></header>
       <MessageList :messages="messages" :streaming-id="streamingId" @feedback="feedback" />
