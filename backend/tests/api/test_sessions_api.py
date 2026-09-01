@@ -52,3 +52,15 @@ def test_history_and_feedback_are_owner_scoped_and_feedback_updates():
     assert second.status_code == 200
     assert second.json()["id"] == feedback_id
     assert second.json()["rating"] == "negative"
+
+def test_session_title_can_be_updated_only_by_owner():
+    client = TestClient(create_app())
+    token_a, _ = register(client, f"{uuid4().hex[:8]}@example.com")
+    token_b, _ = register(client, f"{uuid4().hex[:8]}@example.com")
+    session_id = client.post("/api/v1/sessions", headers=auth(token_a), json={"title": "原始标题"}).json()["id"]
+
+    updated = client.put(f"/api/v1/sessions/{session_id}", headers=auth(token_a), json={"title": "  新标题  "})
+    assert updated.status_code == 200
+    assert updated.json()["title"] == "新标题"
+    assert client.put(f"/api/v1/sessions/{session_id}", headers=auth(token_b), json={"title": "越权"}).status_code == 404
+    assert client.put(f"/api/v1/sessions/{session_id}", headers=auth(token_a), json={"title": "   "}).status_code == 422
