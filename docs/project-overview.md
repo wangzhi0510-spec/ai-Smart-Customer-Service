@@ -74,7 +74,7 @@ cs_rag_agent/
 ├── backend/tests/            # 单元、集成和后端 E2E
 ├── frontend/src/             # Vue 页面、组件、Pinia 和 API 客户端
 ├── frontend/tests/           # Vitest 与 Playwright
-├── sample-data/              # 可安全提交的中文示例知识文档
+├── examples/knowledge_base/  # 可安全提交的中文示例知识文档
 ├── docs/                     # 项目、架构、API、部署和验收文档
 ├── docker-compose.yml        # 基础设施模式和 app profile
 └── tasks/todo.md             # 分阶段任务清单

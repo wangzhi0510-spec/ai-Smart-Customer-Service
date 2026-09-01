@@ -27,7 +27,7 @@ onMounted(async () => {
     sessions.value = loaded ?? [];
     if (sessions.value.length === 0) {
       const created = await chat.createSession("新会话");
-      sessions.value = chat.sessions ?? [created];
+      sessions.value = chat.sessions?.length ? chat.sessions : [created];
       activeSessionId.value = created.id;
       messages.value = [];
       return;

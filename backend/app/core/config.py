@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     retrieval_final_top_n: int = Field(5, validation_alias="RETRIEVAL_FINAL_TOP_N")
     rrf_k: int = Field(60, validation_alias="RRF_K")
     conversation_history_turns: int = Field(5, validation_alias="CONVERSATION_HISTORY_TURNS")
+    demo_user_identifier: str = Field("", validation_alias="DEMO_USER_IDENTIFIER")
+    demo_user_password: str = Field("", validation_alias="DEMO_USER_PASSWORD")
     @classmethod
     def from_env(cls) -> "Settings":
         settings=cls()

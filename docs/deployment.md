@@ -78,9 +78,9 @@ FQA JSON 为数组，每项至少包含 `question`、`answer`，可选 `user_id`
 
 仓库提供：
 
-- `sample-data/product-faq.md`
-- `sample-data/refund-policy.txt`
-- `sample-data/account-guide.txt`
+- `examples/knowledge_base/常见问题FAQ.md`
+- `examples/knowledge_base/退换货政策.txt`
+- `examples/knowledge_base/公司产品介绍.txt`
 
 上传后通过 `GET /api/v1/documents` 轮询状态，直到 `ready`，再进行问答。
 
