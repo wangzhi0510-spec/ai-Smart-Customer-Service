@@ -24,6 +24,11 @@ test("核心闭环：注册、登录、上传、SSE 来源、反馈、删除后�
     if (path === "/api/v1/auth/login" && method === "POST") return json({ access_token: "token-2", token_type: "bearer", user });
     if (path === "/api/v1/sessions" && method === "GET") return json(hasSession ? [session] : []);
     if (path === "/api/v1/sessions" && method === "POST") { hasSession = true; return json(session, 201); }
+    if (path === "/api/v1/sessions/session-1" && method === "PUT") {
+      const body = request.postDataJSON() as { title?: string };
+      session.title = body.title ?? session.title;
+      return json(session);
+    }
     if (path === "/api/v1/sessions/session-1/messages" && method === "GET") {
       return json(hasAnswer ? [{ id: "message-1", session_id: session.id, role: "assistant", content: "Refunds are available within 30 days.", status: "completed", answer_type: "rag", retrieval_strategy: "hybrid_direct", latency_ms: 4, created_at: session.created_at, sources: [{ id: "source-1", document_id: document.id, document_name: document.original_name, page_number: 1, section_title: "Refunds", excerpt: "Refunds are available within 30 days.", display_order: 1 }] }] : []);
     }
@@ -54,8 +59,11 @@ test("核心闭环：注册、登录、上传、SSE 来源、反馈、删除后�
   await page.locator("#login-password").fill("password1");
   await page.getByRole("button", { name: "登录" }).click();
   await expect(page).toHaveURL(/\/chat$/);
-  await page.getByRole("button", { name: "新建会话" }).click();
   await expect(page.locator(".session-item")).toHaveCount(1);
+  await page.getByRole("button", { name: "重命名会话" }).click();
+  await page.getByLabel("会话名称").fill("订单售后");
+  await page.getByLabel("会话名称").press("Enter");
+  await expect(page.locator(".session-item")).toContainText("订单售后");
 
   await page.getByRole("link", { name: "知识库" }).click();
   await expect(page).toHaveURL(/\/documents$/);
