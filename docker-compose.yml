@@ -148,7 +148,7 @@ services:
       - "${APP_PORT:-8000}:8000"
     volumes:
       - document_data:/app/backend/storage/documents
-      - ${MODEL_HOST_PATH:-./models}:/models:ro
+      - ${MODEL_HOST_PATH:-./model}:/models:ro
     depends_on:
       mysql:
         condition: service_healthy
@@ -175,7 +175,7 @@ services:
     command: celery -A backend.app.workers.celery_app:celery_app worker --loglevel=INFO --queues=documents
     volumes:
       - document_data:/app/backend/storage/documents
-      - ${MODEL_HOST_PATH:-./models}:/models:ro
+      - ${MODEL_HOST_PATH:-./model}:/models:ro
     depends_on:
       backend:
         condition: service_healthy
