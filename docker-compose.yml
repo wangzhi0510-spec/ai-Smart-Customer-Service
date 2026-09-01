@@ -26,6 +26,8 @@ x-backend-environment: &backend-environment
   MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-20}
   DAILY_QUESTION_LIMIT: ${DAILY_QUESTION_LIMIT:-100}
   MAX_QUESTION_LENGTH: ${MAX_QUESTION_LENGTH:-500}
+  DEMO_USER_IDENTIFIER: ${DEMO_USER_IDENTIFIER:-demo@example.com}
+  DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD:-}
 
 services:
   mysql:
@@ -181,6 +183,27 @@ services:
         condition: service_healthy
     networks: [app-network]
 
+  seed:
+    profiles: [app]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: "no"
+    environment: *backend-environment
+    command: >-
+      sh -c "if [ -z \"$${DEMO_USER_PASSWORD}\" ]; then
+      echo 'DEMO_USER_PASSWORD is empty; skipping demo seed'; exit 0; fi;
+      python -m backend.scripts.seed_demo_knowledge --knowledge-dir /seed-data"
+    volumes:
+      - document_data:/app/backend/storage/documents
+      - ./examples/knowledge_base:/seed-data:ro
+      - ${MODEL_HOST_PATH:-./model}:/models:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      worker:
+        condition: service_started
+    networks: [app-network]
   frontend:
     profiles: [app]
     build:

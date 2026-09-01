@@ -53,7 +53,7 @@ docker compose --profile app up -d --build
 docker compose --profile app ps
 ```
 
-`backend` 容器启动命令会先执行 `alembic upgrade head`，随后启动 Uvicorn；`worker` 使用 documents 队列；前端容器监听 8080 并映射到 `${FRONTEND_PORT:-5173}`。
+`backend` 容器启动命令会先执行 `alembic upgrade head`，随后启动 Uvicorn；`worker` 使用 documents 队列；前端容器监听 8080 并映射到 `${FRONTEND_PORT:-5173}`。 `seed` 为可选一次性服务，只有设置 `DEMO_USER_PASSWORD` 时才导入示例知识并等待向量化，未设置时自动跳过。
 
 模型目录通过 `${MODEL_HOST_PATH:-./model}:/models:ro` 只读挂载，镜像构建不会复制模型。仓库内 `model/README.md` 记录目录结构；模型权重因体积和许可证原因不提交 GitHub。
 
